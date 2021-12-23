@@ -10,42 +10,61 @@ class ViewController: UITableViewController, AddItemTableViewControllerDelegate 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        TaskModel.getAllTasks() {
-            data, response, error in
-            // We get data, response, and error back. Data contains the JSON data,
-            // Response contains the headers and other information about the response,
-            // and Error contains an error if one occured
-            
-            // A "Do-Try-Catch" block involves a try statement with some catch block for catching any errors thrown by the try statement.
-            do {
-                // Try converting the JSON object to "Foundation Types" (NSDictionary, NSArray, NSString, etc.)
-                if let tasks = try JSONSerialization.jsonObject(with: data!, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSArray{
-                   for task in tasks{
-                       self.items.append(task)
-                   }
-                   DispatchQueue.main.async {
-                       // Do something here to update the UI
-                       self.tableView.reloadData()
-                   }
-                   print(tasks)
-                }
-             }catch{
-                     print("Something went wrong")
-             }
-        }
-
+        getDataFromApi()
     }
 
+    //////////////////// func to get data from the api ////////////////////////////////////
+    func getDataFromApi(){
+      TaskModel.getAllTasks() {
+        data, response, error in
+        // We get data, response, and error back. Data contains the JSON data,
+        // Response contains the headers and other information about the response,
+        // and Error contains an error if one occured
+        
+        // A "Do-Try-Catch" block involves a try statement with some catch block for catching any errors thrown by the try statement.
+        do {
+            // Try converting the JSON object to "Foundation Types" (NSDictionary, NSArray, NSString, etc.)
+            if let tasks = try JSONSerialization.jsonObject(with: data!, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSArray{
+               for task in tasks{
+                   self.items.append(task)
+               }
+               DispatchQueue.main.async {
+                   // Do something here to update the UI
+                   self.tableView.reloadData()
+               }
+               print(tasks)
+            }
+         }catch{
+                 print("Something went wrong")
+         }
+      }
+    }
+    
 ///////////////////////AddItemTableViewControllerDelegate .. protocol functions//////////////////////////////////////////
     func addItemViewController(_ controller: addItemTableViewController, didFinishAddingItem item: String, at indexPath: NSIndexPath?) {
-        if let ip = indexPath {
-            items[ip.row] = item
+        //////////////////// post in the api ////////////////////////////////////
+        TaskModel.addTaskWithObjective(objective: item){
+            data, response, error in
+             do{
+                let task = try JSONSerialization.jsonObject(with: data!, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
+                DispatchQueue.main.async{
+                  self.items.append(task)
+                  self.tableView.reloadData()
+                }
+                    self.getDataFromApi()
+                    
+             }catch{
+                    print("could't post task")
+             }
         }
-        else{
-            items.append(item)
-        }
+//        if let ip = indexPath {
+//            items[ip.row] = item
+//        }
+//        else{
+//            items.append(item)
+//        }
         dismiss(animated: true, completion: nil)
-        tableView.reloadData()
+       // tableView.reloadData()
     }
     
     func cancelItemViewController(_ controller: addItemTableViewController, didPressCancelButton button: UIBarButtonItem) {
@@ -77,8 +96,7 @@ class ViewController: UITableViewController, AddItemTableViewControllerDelegate 
     override func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
         performSegue(withIdentifier: "ItemSegue", sender: indexPath)
     }
-    
-    
+ 
     //function perform something to a clicked row
 //        override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 //
