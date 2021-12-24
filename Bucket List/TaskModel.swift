@@ -46,7 +46,7 @@ class TaskModel {
                     // Set the method to PUT
                     request.httpMethod = "PUT"
                     // Create some bodyData and attach it to the HTTPBody
-                    request.setValue("application/json", forHTTPHeaderField: "Content-Type") // the request is JSON
+                    request.setValue("application/json", forHTTPHeaderField: "Content-Type")
                     request.setValue("application/json", forHTTPHeaderField: "Accept")
                     // Create some bodyData and attach it to the HTTPBody
                     let bodyData = "{\"objective\":\"\(objective)\"}"
