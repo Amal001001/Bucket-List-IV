@@ -56,24 +56,26 @@
                         <sections>
                             <tableViewSection id="YLk-fv-69L">
                                 <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="G0n-e1-xHo">
-                                        <rect key="frame" x="0.0" y="44.5" width="414" height="19.5"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="271" id="G0n-e1-xHo">
+                                        <rect key="frame" x="0.0" y="44.5" width="414" height="271"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="G0n-e1-xHo" id="36J-vD-7y7">
-                                            <rect key="frame" x="0.0" y="0.0" width="414" height="19.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="271"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="add new item" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="NsB-oL-gz4">
-                                                    <rect key="frame" x="10" y="0.0" width="394" height="19.5"/>
+                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="add new task" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="G0P-PD-7es">
+                                                    <rect key="frame" x="30" y="16" width="354" height="239"/>
+                                                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                                    <color key="textColor" systemColor="labelColor"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                    <textInputTraits key="textInputTraits"/>
-                                                </textField>
+                                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                                </textView>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstAttribute="trailing" secondItem="NsB-oL-gz4" secondAttribute="trailing" constant="10" id="BdX-bN-tcS"/>
-                                                <constraint firstAttribute="bottom" secondItem="NsB-oL-gz4" secondAttribute="bottom" id="IUA-Sp-CY1"/>
-                                                <constraint firstItem="NsB-oL-gz4" firstAttribute="top" secondItem="36J-vD-7y7" secondAttribute="top" id="Wvi-Yt-avr"/>
-                                                <constraint firstItem="NsB-oL-gz4" firstAttribute="leading" secondItem="36J-vD-7y7" secondAttribute="leading" constant="10" id="iOd-Ea-5TE"/>
+                                                <constraint firstAttribute="bottomMargin" secondItem="G0P-PD-7es" secondAttribute="bottom" constant="5" id="1Ba-AC-weq"/>
+                                                <constraint firstItem="G0P-PD-7es" firstAttribute="leading" secondItem="36J-vD-7y7" secondAttribute="leadingMargin" constant="10" id="45G-vt-3bG"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="G0P-PD-7es" secondAttribute="trailing" constant="10" id="CfR-IQ-F7c"/>
+                                                <constraint firstItem="G0P-PD-7es" firstAttribute="top" secondItem="36J-vD-7y7" secondAttribute="topMargin" constant="5" id="gdV-FT-g7a"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -98,12 +100,12 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="itemTextField" destination="NsB-oL-gz4" id="1yd-C8-0BV"/>
+                        <outlet property="itemTextView" destination="G0P-PD-7es" id="2Ax-uy-P8I"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="NLr-HP-fKK" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="757" y="90"/>
+            <point key="canvasLocation" x="756.52173913043487" y="89.732142857142847"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="cba-Ce-6sv">
@@ -144,6 +146,9 @@
         <segue reference="rYh-Qp-W9V"/>
     </inferredMetricsTieBreakers>
     <resources>
+        <systemColor name="labelColor">
+            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

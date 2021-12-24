@@ -5,7 +5,7 @@ import UIKit
 
 class ViewController: UITableViewController, AddItemTableViewControllerDelegate {
     
-    var items = [Any]()
+    var items = [Tasks]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -15,7 +15,7 @@ class ViewController: UITableViewController, AddItemTableViewControllerDelegate 
 
     //////////////////// func to get data from the api ////////////////////////////////////
     func getDataFromApi(){
-      TaskModel.getAllTasks() {
+        TaskModel.getAllTasks(completionHandler:{
         data, response, error in
         // We get data, response, and error back. Data contains the JSON data,
         // Response contains the headers and other information about the response,
@@ -23,48 +23,39 @@ class ViewController: UITableViewController, AddItemTableViewControllerDelegate 
         
         // A "Do-Try-Catch" block involves a try statement with some catch block for catching any errors thrown by the try statement.
         do {
-            // Try converting the JSON object to "Foundation Types" (NSDictionary, NSArray, NSString, etc.)
-            if let tasks = try JSONSerialization.jsonObject(with: data!, options: JSONSerialization.ReadingOptions.mutableContainers) as? NSArray{
-               for task in tasks{
-                   self.items.append(task)
-               }
+            self.items = try JSONDecoder().decode([Tasks].self, from: data!)
                DispatchQueue.main.async {
                    // Do something here to update the UI
                    self.tableView.reloadData()
                }
-               print(tasks)
-            }
+            print(self.items)
          }catch{
-                 print("Something went wrong")
+                print("Something went wrong")
          }
-      }
+      })
     }
     
 ///////////////////////AddItemTableViewControllerDelegate .. protocol functions//////////////////////////////////////////
     func addItemViewController(_ controller: addItemTableViewController, didFinishAddingItem item: String, at indexPath: NSIndexPath?) {
-        //////////////////// post in the api ////////////////////////////////////
-        TaskModel.addTaskWithObjective(objective: item){
-            data, response, error in
-             do{
-                let task = try JSONSerialization.jsonObject(with: data!, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
-                DispatchQueue.main.async{
-                  self.items.append(task)
-                  self.tableView.reloadData()
+        
+        if let ip = indexPath {
+            //////////////////// update a task in the api ////////////////////////////////////
+            TaskModel.updateTask(id: items[ip.row].id, objective: item, completionHandler:{
+                data, response, error in
+                DispatchQueue.main.async {
+                   self.getDataFromApi()
                 }
-                    self.getDataFromApi()
-                    
-             }catch{
-                    print("could't post task")
-             }
+            })
+       }else{
+            //////////////////// post in the api ////////////////////////////////////
+            TaskModel.addTaskWithObjective(objective: item , completionHandler:{
+                data, response, error in
+                DispatchQueue.main.async{
+                   self.getDataFromApi()
+                }
+            })
         }
-//        if let ip = indexPath {
-//            items[ip.row] = item
-//        }
-//        else{
-//            items.append(item)
-//        }
         dismiss(animated: true, completion: nil)
-       // tableView.reloadData()
     }
     
     func cancelItemViewController(_ controller: addItemTableViewController, didPressCancelButton button: UIBarButtonItem) {
@@ -81,7 +72,7 @@ class ViewController: UITableViewController, AddItemTableViewControllerDelegate 
         let cell = tableView.dequeueReusableCell(withIdentifier: "myCell", for: indexPath)
         // All UITableViewCell objects have a build in textLabel so set it to the model that is corresponding to the row in array
         cell.textLabel?.numberOfLines = 0
-        cell.textLabel?.text = "\(items[indexPath.row])"
+        cell.textLabel?.text = "\(items[indexPath.row].objective)"
         // return cell so that Table View knows what to draw in each row
         return cell
     }
@@ -89,8 +80,13 @@ class ViewController: UITableViewController, AddItemTableViewControllerDelegate 
     //function for delete with a swipe
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
             
-            items.remove(at: indexPath.row)
-            tableView.reloadData()
+        //////////////////// delete item in  the api ////////////////////////////////////
+        TaskModel.deleteTask(id: items[indexPath.row].id){
+            data, response, error in
+                DispatchQueue.main.async{
+                  self.getDataFromApi()
+                }
+        }
     }
 
     override func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
@@ -111,7 +107,7 @@ class ViewController: UITableViewController, AddItemTableViewControllerDelegate 
         
         if sender is NSIndexPath {
             let indexPath = sender as! NSIndexPath
-            let item = items[indexPath.row]
+            let item = items[indexPath.row].objective
             addItemTableVC.item = "\(item)"
             addItemTableVC.indexPath = indexPath
         }
